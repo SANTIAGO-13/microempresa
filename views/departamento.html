@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Departamento</title>
+    <link rel="stylesheet" href="../assets/css/departamento.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Agregar Departamento</h2>
+            </div>
+            <form id="departamento-form">
+                <label for="id">ID Dpto y ID País</label>
+                <input type="text" id="id" name="id" placeholder="Ej: 23, 4566" required>
+
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" required>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+
+                <div class="form-buttons">
+                    <button type="submit" class="create-button">Crear</button>
+                    <button type="button" class="exit-button" onclick="redirectToListado()">Salir</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <div class="menu-bar">
+                <div class="menu-icon" onclick="showMenu()">&#9776;</div>
+                <span>Listado</span>
+            </div>
+            <table id="departamento-table">
+                <thead>
+                    <tr>
+                        <th>ID Dpto</th>
+                        <th>ID País</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se agregarán las filas con los datos de departamentos -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function redirectToListado() {
+            window.location.href = 'gestion.html'; // Cambia esto a la ruta correcta
+        }
+
+        function showMenu() {
+            const option = prompt('Selecciona una opción:\n1. Agregar representante legal\n2. Agregar compra\n3. Agregar país\n4. Agregar departamento\n5. Agregar ciudad');
+            console.log('Opción seleccionada:', option);
+            switch(option) {
+                case '1':
+                    window.location.href = 'representante.html';
+                    break;
+                case '2':
+                    window.location.href = 'compra.html';
+                    break;
+                case '3':
+                    window.location.href = 'pais.html';
+                    break;
+                case '4':
+                    window.location.href = 'departamento.html';
+                    break;
+                case '5':
+                    window.location.href = 'cuidad.html';
+                    break;
+                default:
+                    alert('Opción no válida.');
+            }
+        }
+
+        document.getElementById('departamento-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const idInput = document.getElementById('id').value;
+            const ids = idInput.split(',').map(id => id.trim());
+            const nombre = document.getElementById('nombre').value;
+            const estado = document.getElementById('estado').value;
+
+            if (ids.length !== 2) {
+                alert('Por favor, ingresa exactamente dos IDs separados por una coma.');
+                return;
+            }
+
+            const idDpto = ids[0];
+            const idPais = ids[1];
+
+            fetch('/api/departamento', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_dpto: idDpto,
+                    id_pais: idPais,  // Cambio de id_país a id_pais
+                    Nombre: nombre,
+                    Estado: estado
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addRowToTable({
+                        id_dpto: idDpto,
+                        id_pais: idPais,
+                        Nombre: nombre,
+                        Estado: estado
+                    });
+                    document.getElementById('departamento-form').reset();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al registrar el departamento.');
+            });
+        });
+
+        function addRowToTable(departamento) {
+            const table = document.getElementById('departamento-table').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${departamento.id_dpto}</td>
+                <td>${departamento.id_pais}</td> 
+                <td>${departamento.Nombre}</td>
+                <td>${departamento.Estado}</td>
+                <td>
+                    <button class="edit-button" onclick="editRow(this)">Editar</button>
+                    <button class="delete-button" onclick="deleteRow(this, '${departamento.id_dpto}', '${departamento.id_pais}')">Eliminar</button>
+                </td>
+            `;
+        }
+
+        function editRow(button) {
+            const row = button.parentNode.parentNode;
+            const cells = row.getElementsByTagName('td');
+
+            const newNombre = prompt('Editar nombre:', cells[2].innerText);
+            const newEstado = prompt('Editar estado (activo/inactivo):', cells[3].innerText);
+
+            if (newNombre !== null && newEstado !== null) {
+                fetch(`/api/departamento/${cells[0].innerText}/${cells[1].innerText}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        Nombre: newNombre,
+                        Estado: newEstado
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        cells[2].innerText = newNombre;
+                        cells[3].innerText = newEstado;
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al editar el departamento:', error);
+                });
+            }
+        }
+
+        function deleteRow(button, idDpto, idPais) {
+            if (confirm('¿Estás seguro de que deseas eliminar este departamento?')) {
+                fetch(`/api/departamento/${idDpto}/${idPais}`, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const row = button.parentNode.parentNode;
+                        row.remove();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar el departamento:', error);
+                });
+            }
+        }
+
+        function loadDepartamentos() {
+            fetch('/api/departamento')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('departamento-table').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = '';
+
+                    data.forEach(departamento => {
+                        addRowToTable(departamento);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar los departamentos:', error);
+                });
+        }
+
+        window.onload = loadDepartamentos;
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

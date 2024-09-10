@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Nota de Crédito</title>
+    <link rel="stylesheet" href="../assets/css/notacredito.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Agregar Nota de Crédito</h2>
+            </div>
+            <form id="nota-credito-form">
+                <label for="nota-id">ID Nota Crédito</label>
+                <input type="text" id="nota-id" name="nota-id" required>
+
+                <label for="venta-id">ID Venta</label>
+                <input type="text" id="venta-id" name="venta-id" required>
+
+                <label for="fecha-factura">Fecha Factura</label>
+                <input type="date" id="fecha-factura" name="fecha-factura" required>
+
+                <label for="rzn-devolucion">Razón Devolución</label>
+                <input type="text" id="rzn-devolucion" name="rzn-devolucion" required>
+
+                <label for="mnt-total">Monto Total</label>
+                <input type="number" id="mnt-total" name="mnt-total" required>
+
+                <label for="cliente-id">ID Cliente</label>
+                <input type="text" id="cliente-id" name="cliente-id" required>
+
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" required>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+
+                <div class="form-buttons">
+                    <button type="submit" class="create-button">Crear</button>
+                    <button type="button" class="exit-button" onclick="redirectToGestion()">Salir</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <div class="menu-bar">
+                <div class="menu-icon" onclick="showMenu()">&#9776;</div>
+                <span>Listado</span>
+            </div>
+            <table id="nota-credito-table">
+                <thead>
+                    <tr>
+                        <th>ID Nota Crédito</th>
+                        <th>ID Venta</th>
+                        <th>Fecha Factura</th>
+                        <th>Razón Devolución</th>
+                        <th>Monto Total</th>
+                        <th>ID Cliente</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se agregarán las filas con los datos de notas de crédito -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Redirige a la página de gestión
+        function redirectToGestion() {
+            window.location.href = 'gestion.html';
+        }
+
+        // Muestra el menú y redirige a la página de notas de crédito
+        function showMenu() {
+            alert('Agregar nota de crédito');
+            window.location.href = 'notacredito.html';
+        }
+
+        // Verifica si el ID ya existe
+        function checkIDExists(id, type) {
+            return fetch(`/api/check/${type}/${id}`)
+                .then(response => response.json())
+                .then(data => data.exists);
+        }
+
+        // Agrega los datos del formulario a la tabla y los guarda en la base de datos
+        document.getElementById('nota-credito-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const idNotaCredito = document.getElementById('nota-id').value;
+            const idVenta = document.getElementById('venta-id').value;
+            const idCliente = document.getElementById('cliente-id').value;
+
+            Promise.all([
+                checkIDExists(idNotaCredito, 'notacredito'),
+                checkIDExists(idVenta, 'venta'),
+                checkIDExists(idCliente, 'cliente')
+            ]).then(results => {
+                if (results.includes(true)) {
+                    alert('Uno de los IDs ya existe. Por favor, usa IDs únicos.');
+                    return;
+                }
+
+                const notaCreditoData = {
+                    id_NotaCredito: idNotaCredito,
+                    id_venta: idVenta,
+                    Fech_factra: document.getElementById('fecha-factura').value,
+                    Rzn_devolucion: document.getElementById('rzn-devolucion').value,
+                    Mnt_total: document.getElementById('mnt-total').value,
+                    id_cliente: idCliente,
+                    Estado: document.getElementById('estado').value,
+                };
+
+                fetch('/api/notacredito', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(notaCreditoData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Agrega la fila a la tabla en el frontend
+                        addRowToTable(notaCreditoData);
+                        document.getElementById('nota-credito-form').reset(); // Reinicia el formulario
+                        alert('Nota de crédito agregada exitosamente.');
+                    } else {
+                        alert('Error al agregar la nota de crédito: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al agregar la nota de crédito.');
+                });
+            });
+        });
+
+        // Función para agregar una fila a la tabla
+        function addRowToTable(notaCreditoData) {
+            const table = document.getElementById('nota-credito-table').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+
+            // Formatear la fecha a 'YYYY-MM-DD'
+            const formattedDate = new Date(notaCreditoData.Fech_factra).toISOString().split('T')[0];
+
+            newRow.innerHTML = `
+                <td>${notaCreditoData.id_NotaCredito}</td>
+                <td>${notaCreditoData.id_venta}</td>
+                <td>${formattedDate}</td>
+                <td>${notaCreditoData.Rzn_devolucion}</td>
+                <td>${notaCreditoData.Mnt_total}</td>
+                <td>${notaCreditoData.id_cliente}</td>
+                <td>${notaCreditoData.Estado}</td>
+                <td>
+                    <button class="edit-button" onclick="editRow(this)">Editar</button>
+                    <button class="delete-button" onclick="deleteRow(this)">Eliminar</button>
+                </td>
+            `;
+        }
+
+        // Función para cargar las notas de crédito al cargar la página
+        function loadNotasCredito() {
+            fetch('/api/notacredito')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('nota-credito-table').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = ''; // Limpiar la tabla antes de cargar nuevos datos
+
+                    data.forEach(notaCredito => {
+                        const formattedDate = new Date(notaCredito.Fech_factra).toISOString().split('T')[0];
+                        notaCredito.Fech_factra = formattedDate; // Formatear la fecha
+                        addRowToTable(notaCredito);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar las notas de crédito:', error);
+                });
+        }
+
+        // Función para editar una fila
+        function editRow(button) {
+            const row = button.parentNode.parentNode;
+            const cells = row.getElementsByTagName('td');
+
+            // Asigna los valores de la fila a los campos del formulario para que puedan ser editados
+            document.getElementById('nota-id').value = cells[0].innerText;
+            document.getElementById('venta-id').value = cells[1].innerText;
+            document.getElementById('fecha-factura').value = cells[2].innerText;
+            document.getElementById('rzn-devolucion').value = cells[3].innerText;
+            document.getElementById('mnt-total').value = cells[4].innerText;
+            document.getElementById('cliente-id').value = cells[5].innerText;
+            document.getElementById('estado').value = cells[6].innerText;
+
+            // Elimina la fila original
+            row.remove();
+        }
+
+        // Función para eliminar una fila
+        function deleteRow(button) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta nota de crédito?')) {
+                const row = button.parentNode.parentNode;
+                const idNotaCredito = row.cells[0].innerText;
+
+                fetch(`/api/notacredito/${idNotaCredito}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        row.remove(); // Elimina la fila de la tabla
+                        alert('Nota de crédito eliminada exitosamente.');
+                    } else {
+                        alert('Error al eliminar la nota de crédito: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar la nota de crédito:', error);
+                    alert('Error al eliminar la nota de crédito.');
+                });
+            }
+        }
+
+        // Cargar las notas de crédito al cargar la página
+        document.addEventListener('DOMContentLoaded', loadNotasCredito);
+    </script>
+</body>
+</html>
+
+
+
+
+
+

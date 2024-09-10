@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Ciudad</title>
+    <link rel="stylesheet" href="../assets/css/cuidad.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Agregar Ciudad</h2>
+            </div>
+            <form id="ciudad-form">
+                <label for="id-cdad">ID Ciudad y ID Dpto</label>
+                <input type="text" id="id-cdad" name="id" placeholder="Ej: 23, 4566" required>
+
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" required>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+
+                <div class="form-buttons">
+                    <button type="submit" class="create-button">Crear</button>
+                    <button type="button" class="exit-button" onclick="redirectToListado()">Salir</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <div class="menu-bar">
+                <div class="menu-icon" onclick="showMenu()">&#9776;</div>
+                <span>Listado</span>
+            </div>
+            <table id="ciudad-table">
+                <thead>
+                    <tr>
+                        <th>ID Ciudad</th>
+                        <th>Nombre</th>
+                        <th>ID Departamento</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se agregarán las filas con los datos de ciudades -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function redirectToListado() {
+            window.location.href = 'gestion.html'; // Verifica que esta ruta sea correcta si es necesario
+        }
+
+        function showMenu() {
+            const option = prompt('Selecciona una opción:\n1. Agregar representante legal\n2. Agregar compra\n3. Agregar país\n4. Agregar departamento\n5. Agregar ciudad');
+            console.log('Opción seleccionada:', option); // Para depuración
+            switch(option) {
+                case '1':
+                    window.location.href = 'representante.html'; // Verifica que esta ruta sea correcta
+                    break;
+                case '2':
+                    window.location.href = 'compra.html'; // Verifica que esta ruta sea correcta
+                    break;
+                case '3':
+                    window.location.href = 'pais.html'; // Verifica que esta ruta sea correcta
+                    break;
+                case '4':
+                    window.location.href = 'departamento.html'; // Verifica que esta ruta sea correcta
+                    break;
+                case '5':
+                    window.location.href = 'cuidad.html'; // Verifica que esta ruta sea correcta
+                    break;
+                default:
+                    alert('Opción no válida.');
+            }
+        }
+
+        document.getElementById('ciudad-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const idCdadInput = document.getElementById('id-cdad').value.split(',');
+            const idCdad = idCdadInput[0].trim();
+            const idDpto = idCdadInput[1].trim();
+            const nombre = document.getElementById('nombre').value;
+            const estado = document.getElementById('estado').value;
+
+            // Enviar datos al servidor
+            fetch('/api/cuidad', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_cdad: idCdad,
+                    id_dpto: idDpto,
+                    nombre: nombre,
+                    estado: estado
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addRowToTable({
+                        id_cdad: idCdad,
+                        nombre: nombre,
+                        id_dpto: idDpto,
+                        estado: estado
+                    });
+                    document.getElementById('ciudad-form').reset();
+                } else {
+                    alert(data.message); // Mostrar el mensaje de error si el ID ya existe
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al registrar la ciudad.');
+            });
+        });
+
+        function addRowToTable(ciudad) {
+            const table = document.getElementById('ciudad-table').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${ciudad.id_cdad}</td>
+                <td>${ciudad.Nombre}</td>
+                <td>${ciudad.id_dpto}</td>
+                <td>${ciudad.Estado}</td>
+                <td>
+                    <button class="edit-button" onclick="editRow(this)">Editar</button>
+                    <button class="delete-button" onclick="deleteRow(this)">Eliminar</button>
+                </td>
+            `;
+        }
+
+        function editRow(button) {
+            const row = button.parentNode.parentNode;
+            const cells = row.getElementsByTagName('td');
+
+            const idCdad = cells[0].innerText;
+            const nombre = cells[1].innerText;
+            const idDpto = cells[2].innerText;
+            const estado = cells[3].innerText;
+
+            // Mostrar ventana de confirmación para editar
+            const newNombre = prompt('Editar nombre de la ciudad:', nombre);
+            const newEstado = prompt('Editar estado de la ciudad:', estado);
+
+            if (newNombre !== null && newEstado !== null) {
+                // Enviar datos actualizados al servidor
+                fetch(`/api/cuidad/${idCdad}/${idDpto}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nombre: newNombre,
+                        estado: newEstado
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        cells[1].innerText = newNombre;
+                        cells[3].innerText = newEstado;
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al editar la ciudad:', error);
+                });
+            }
+        }
+
+        function deleteRow(button) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta ciudad?')) {
+                const row = button.parentNode.parentNode;
+                const idCdad = row.getElementsByTagName('td')[0].innerText;
+                const idDpto = row.getElementsByTagName('td')[2].innerText;
+
+                // Eliminar de la base de datos
+                fetch(`/api/cuidad/${idCdad}/${idDpto}`, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        row.remove();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar la ciudad:', error);
+                });
+            }
+        }
+
+        // Función para cargar las ciudades cuando se carga la página
+        function loadCiudades() {
+            fetch('/api/cuidad')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tableBody = document.getElementById('ciudad-table').getElementsByTagName('tbody')[0];
+                        tableBody.innerHTML = ''; // Limpiar la tabla antes de cargar nuevos datos
+
+                        data.data.forEach(ciudad => {
+                            addRowToTable(ciudad);
+                        });
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar las ciudades:', error);
+                });
+        }
+
+        // Cargar las ciudades cuando se carga la página
+        window.onload = loadCiudades;
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

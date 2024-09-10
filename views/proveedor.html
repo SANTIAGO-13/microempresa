@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Proveedores</title>
+    <link rel="stylesheet" href="../assets/css/proveedor.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Agregar Proveedores</h2>
+            </div>
+            <form id="proveedor-form">
+                <input type="hidden" id="proveedor-id" name="id"> <!-- Campo oculto para ID del proveedor -->
+                
+                <label for="nit">NIT</label>
+                <input type="text" id="nit" name="nit" required>
+
+                <label for="razon-social">Razón social</label>
+                <input type="text" id="razon-social" name="razonSocial" required>
+
+                <label for="direccion">Dirección</label>
+                <input type="text" id="direccion" name="direccion" required>
+
+                <label for="id-pais">ID País</label>
+                <input type="text" id="id-pais" name="idPais" required>
+
+                <label for="id-dpto">ID Departamento</label>
+                <input type="text" id="id-dpto" name="idDpto" required>
+
+                <label for="id-cdad">ID Ciudad</label>
+                <input type="text" id="id-cdad" name="idCdad" required>
+
+                <label for="correo">Correo</label>
+                <input type="email" id="correo" name="correo" required>
+
+                <label for="celular">Celular</label>
+                <input type="text" id="celular" name="celular" required>
+
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" required>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+
+                <div class="form-buttons">
+                    <button type="submit" class="create-button">Guardar</button>
+                    <button type="button" class="exit-button" onclick="redirectToGestion()">Salir</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <div class="menu-bar">
+                <div class="menu-icon" onclick="showMenu()">&#9776;</div>
+                <span>Listado</span>
+            </div>
+            <table id="proveedor-table">
+                <thead>
+                    <tr>
+                        <th>NIT</th>
+                        <th>Razón social</th>
+                        <th>Dirección</th>
+                        <th>ID País</th>
+                        <th>ID Departamento</th>
+                        <th>ID Ciudad</th>
+                        <th>Correo</th>
+                        <th>Celular</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se agregarán las filas con los datos de proveedores -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let editingId = null;
+
+        function redirectToGestion() {
+            window.location.href = 'gestion.html'; // Cambia esto a la ruta correcta
+        }
+
+        function showMenu() {
+            const option = prompt('Selecciona una opción:\n1. Agregar representante legal\n2. Agregar compra\n3. Agregar país\n4. Agregar departamento\n5. Agregar ciudad');
+            console.log('Opción seleccionada:', option); // Para depuración
+            switch(option) {
+                case '1':
+                    window.location.href = 'representante.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '2':
+                    window.location.href = 'compra.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '3':
+                    window.location.href = 'pais.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '4':
+                    window.location.href = 'departamento.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '5':
+                    window.location.href = 'ciudad.html'; // Corrige la ruta aquí
+                    break;
+                default:
+                    alert('Opción no válida.');
+            }
+        }
+
+        document.getElementById('proveedor-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('proveedor-id').value.trim();
+            const nit = document.getElementById('nit').value.trim();
+            const razonSocial = document.getElementById('razon-social').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const idPais = document.getElementById('id-pais').value.trim();
+            const idDpto = document.getElementById('id-dpto').value.trim();
+            const idCdad = document.getElementById('id-cdad').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const celular = document.getElementById('celular').value.trim();
+            const estado = document.getElementById('estado').value;
+
+            const proveedorData = {
+                Nit: nit,
+                Razon_social: razonSocial,
+                Direccion: direccion,
+                id_pais: idPais,
+                id_dpto: idDpto,
+                id_cdad: idCdad,
+                Correo: correo,
+                Celular: celular,
+                Estado: estado
+            };
+
+            if (editingId) {
+                // Actualizar proveedor
+                fetch(`/api/proveedor/${editingId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(proveedorData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Proveedor actualizado exitosamente.');
+                        loadProveedores(); // Recargar los proveedores
+                        document.getElementById('proveedor-form').reset();
+                        editingId = null;
+                    } else {
+                        alert('Error al actualizar proveedor: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al actualizar proveedor.');
+                });
+            } else {
+                // Crear nuevo proveedor
+                fetch('/api/proveedor', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(proveedorData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        addRowToTable(proveedorData);
+                        alert('Proveedor agregado exitosamente.');
+                        document.getElementById('proveedor-form').reset();
+                    } else {
+                        alert('Error al agregar proveedor: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al agregar proveedor.');
+                });
+            }
+        });
+
+        function addRowToTable(proveedorData) {
+            const table = document.getElementById('proveedor-table').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+
+            newRow.innerHTML = `
+                <td>${proveedorData.Nit}</td>
+                <td>${proveedorData.Razon_social}</td>
+                <td>${proveedorData.Direccion}</td>
+                <td>${proveedorData.id_pais}</td>
+                <td>${proveedorData.id_dpto}</td>
+                <td>${proveedorData.id_cdad}</td>
+                <td>${proveedorData.Correo}</td>
+                <td>${proveedorData.Celular}</td>
+                <td>${proveedorData.Estado}</td>
+                <td>
+                    <button class="edit-button" onclick="editRow(this)">Editar</button>
+                    <button class="delete-button" onclick="deleteRow(this)">Eliminar</button>
+                </td>
+            `;
+        }
+
+        function editRow(button) {
+            const row = button.parentNode.parentNode;
+            const cells = row.getElementsByTagName('td');
+
+            document.getElementById('proveedor-id').value = cells[0].innerText;
+            document.getElementById('nit').value = cells[0].innerText;
+            document.getElementById('razon-social').value = cells[1].innerText;
+            document.getElementById('direccion').value = cells[2].innerText;
+            document.getElementById('id-pais').value = cells[3].innerText;
+            document.getElementById('id-dpto').value = cells[4].innerText;
+            document.getElementById('id-cdad').value = cells[5].innerText;
+            document.getElementById('correo').value = cells[6].innerText;
+            document.getElementById('celular').value = cells[7].innerText;
+            document.getElementById('estado').value = cells[8].innerText;
+
+            editingId = cells[0].innerText; // Establecer el ID para actualizar
+        }
+
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            const nit = row.getElementsByTagName('td')[0].innerText;
+
+            fetch(`/api/proveedor/${nit}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    row.remove();
+                    alert('Proveedor eliminado exitosamente.');
+                } else {
+                    alert('Error al eliminar proveedor: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar proveedor.');
+            });
+        }
+
+        function loadProveedores() {
+            fetch('/api/proveedor')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(proveedor => {
+                    addRowToTable(proveedor);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar proveedores.');
+            });
+        }
+
+        // Cargar proveedores al inicio
+        window.onload = loadProveedores;
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

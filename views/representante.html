@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Representante Legal</title>
+    <link rel="stylesheet" href="../assets/css/representante.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Agregar Representante Legal</h2>
+            </div>
+            <form id="representante-form">
+                <label for="id-repre">ID Representante Legal</label>
+                <input type="text" id="id-repre" name="id-repre" required>
+
+                <label for="direccion">Dirección</label>
+                <input type="text" id="direccion" name="direccion" required>
+
+                <label for="id-pais">ID País</label>
+                <input type="text" id="id-pais" name="id-pais" required>
+
+                <label for="id-dpto">ID Departamento</label>
+                <input type="text" id="id-dpto" name="id-dpto" required>
+
+                <label for="id-ciud">ID Ciudad</label>
+                <input type="text" id="id-ciud" name="id-ciud" required>
+
+                <label for="correo">Correo</label>
+                <input type="email" id="correo" name="correo" required>
+
+                <label for="celular">Celular</label>
+                <input type="text" id="celular" name="celular" required>
+
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" required>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+
+                <div class="form-buttons">
+                    <button type="submit" class="create-button">Crear</button>
+                    <button type="button" class="exit-button" onclick="redirectToGestion()">Salir</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <div class="menu-bar">
+                <div class="menu-icon" onclick="showMenu()">&#9776;</div>
+                <span>Listado</span>
+            </div>
+            <table id="representante-table">
+                <thead>
+                    <tr>
+                        <th>ID Representante Legal</th>
+                        <th>Dirección</th>
+                        <th>ID País</th>
+                        <th>ID Departamento</th>
+                        <th>ID Ciudad</th>
+                        <th>Correo</th>
+                        <th>Celular</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se agregarán las filas con los datos de representantes legales -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function redirectToGestion() {
+            window.location.href = 'gestion.html'; // Cambia esto a la ruta correcta
+        }
+
+        function showMenu() {
+            const option = prompt('Selecciona una opción:\n1. Agregar representante legal\n2. Agregar compra\n3. Agregar país\n4. Agregar departamento\n5. Agregar ciudad');
+            console.log('Opción seleccionada:', option); // Para depuración
+            switch(option) {
+                case '1':
+                    window.location.href = 'representante.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '2':
+                    window.location.href = 'compra.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '3':
+                    window.location.href = 'pais.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '4':
+                    window.location.href = 'departamento.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '5':
+                    window.location.href = 'cuidad.html'; // Corrige la ruta aquí
+                    break;
+                default:
+                    alert('Opción no válida.');
+            }
+        }
+
+        document.getElementById('representante-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const representanteData = {
+                Id_repre_legal: document.getElementById('id-repre').value.trim(),
+                Direccion: document.getElementById('direccion').value.trim(),
+                id_pais: document.getElementById('id-pais').value.trim(),
+                id_dpto: document.getElementById('id-dpto').value.trim(),
+                id_ciud: document.getElementById('id-ciud').value.trim(),
+                Correo: document.getElementById('correo').value.trim(),
+                Celular: document.getElementById('celular').value.trim(),
+                Estado: document.getElementById('estado').value
+            };
+
+            console.log('Datos a enviar:', representanteData); // Para depuración
+
+            fetch('/api/representante', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(representanteData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    addRowToTable(representanteData);
+                    document.getElementById('representante-form').reset(); // Reinicia el formulario
+                    alert('Representante legal agregado exitosamente.');
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al registrar el representante legal.');
+            });
+        });
+
+        function addRowToTable(representanteData) {
+            const table = document.getElementById('representante-table').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${representanteData.Id_repre_legal}</td>
+                <td>${representanteData.Direccion}</td>
+                <td>${representanteData.id_pais}</td>
+                <td>${representanteData.id_dpto}</td>
+                <td>${representanteData.id_ciud}</td>
+                <td>${representanteData.Correo}</td>
+                <td>${representanteData.Celular}</td>
+                <td>${representanteData.Estado}</td>
+                <td>
+                    <button class="edit-button" onclick="editRow(this)">Editar</button>
+                    <button class="delete-button" onclick="deleteRow(this)">Eliminar</button>
+                </td>
+            `;
+        }
+
+        function loadRepresentantes() {
+            fetch('/api/representante')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('representante-table').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = ''; // Limpiar la tabla antes de cargar nuevos datos
+
+                    data.forEach(representante => {
+                        addRowToTable(representante);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar los representantes legales:', error);
+                });
+        }
+
+        window.onload = loadRepresentantes;
+
+        function editRow(button) {
+            const row = button.parentNode.parentNode;
+            const cells = row.getElementsByTagName('td');
+
+            document.getElementById('id-repre').value = cells[0].innerText;
+            document.getElementById('direccion').value = cells[1].innerText;
+            document.getElementById('id-pais').value = cells[2].innerText;
+            document.getElementById('id-dpto').value = cells[3].innerText;
+            document.getElementById('id-ciud').value = cells[4].innerText;
+            document.getElementById('correo').value = cells[5].innerText;
+            document.getElementById('celular').value = cells[6].innerText;
+            document.getElementById('estado').value = cells[7].innerText;
+
+            row.remove();
+
+            // Cambiar el método de envío del formulario para actualización
+            document.getElementById('representante-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const updatedData = {
+                    Id_repre_legal: document.getElementById('id-repre').value.trim(),
+                    Direccion: document.getElementById('direccion').value.trim(),
+                    id_pais: document.getElementById('id-pais').value.trim(),
+                    id_dpto: document.getElementById('id-dpto').value.trim(),
+                    id_ciud: document.getElementById('id-ciud').value.trim(),
+                    Correo: document.getElementById('correo').value.trim(),
+                    Celular: document.getElementById('celular').value.trim(),
+                    Estado: document.getElementById('estado').value
+                };
+
+                fetch('/api/representante', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        addRowToTable(updatedData);
+                        document.getElementById('representante-form').reset(); // Reinicia el formulario
+                        alert('Representante legal actualizado exitosamente.');
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al actualizar el representante legal.');
+                });
+            });
+        }
+
+        function deleteRow(button) {
+            const row = button.parentNode.parentNode;
+            const id = row.cells[0].innerText;
+
+            fetch(`/api/representante/${id}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    row.remove();
+                    alert('Representante legal eliminado exitosamente.');
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar el representante legal.');
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

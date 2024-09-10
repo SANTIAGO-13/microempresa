@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Compra</title>
+    <link rel="stylesheet" href="../assets/css/compra.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2 id="form-title">Agregar Compra y Detalle Compra</h2>
+            </div>
+            <form id="compra-form">
+                <input type="hidden" id="edit-id-compra" name="edit_id_compra">
+
+                <label for="id-compra">ID Compra</label>
+                <input type="text" id="id-compra" name="id_compra" required>
+
+                <label for="nit">NIT</label>
+                <input type="text" id="nit" name="Nit" required>
+
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="Fecha" required>
+
+                <label for="valor">Valor</label>
+                <input type="text" id="valor" name="Valor" required>
+
+                <label for="iva">IVA</label>
+                <input type="text" id="iva" name="Iva" required>
+
+                <label for="total-pagar">Total a Pagar</label>
+                <input type="text" id="total-pagar" name="Total_pagar" required>
+
+                <label for="id-producto">ID Producto</label>
+                <input type="text" id="id-producto" name="id_productos" required>
+
+                <label for="cantidad">Cantidad</label>
+                <input type="text" id="cantidad" name="Cantidad" required>
+
+                <label for="estado">Estado</label>
+                <select id="estado" name="Estado" required>
+                    <option value="">Seleccione un estado</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+
+                <div class="form-buttons">
+                    <button type="submit" id="submit-button" class="create-button">Crear</button>
+                    <button type="button" class="exit-button" onclick="redirectToGestion()">Salir</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <div class="menu-bar">
+                <div class="menu-icon" onclick="showMenu()">&#9776;</div>
+                <span>Listado</span>
+            </div>
+            <table id="compra-table">
+                <thead>
+                    <tr>
+                        <th>ID Compra</th>
+                        <th>NIT</th>
+                        <th>Fecha</th>
+                        <th>Valor</th>
+                        <th>IVA</th>
+                        <th>Total a Pagar</th>
+                        <th>ID Producto</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se agregarán las filas con los datos de compras -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let isEditMode = false;
+
+        function redirectToGestion() {
+            window.location.href = 'gestion.html';
+        }
+
+        function showMenu() {
+            const option = prompt('Selecciona una opción:\n1. Agregar representante legal\n2. Agregar compra\n3. Agregar país\n4. Agregar departamento\n5. Agregar ciudad');
+            console.log('Opción seleccionada:', option);
+            switch(option) {
+                case '1':
+                    window.location.href = 'representante-legal.html';
+                    break;
+                case '2':
+                    window.location.href = 'compra.html';
+                    break;
+                case '3':
+                    window.location.href = 'pais.html';
+                    break;
+                case '4':
+                    window.location.href = 'departamento.html';
+                    break;
+                case '5':
+                    window.location.href = 'ciudad.html';
+                    break;
+                default:
+                    alert('Opción no válida');
+            }
+        }
+
+        document.getElementById('compra-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            if (isEditMode) {
+                const idCompra = document.getElementById('edit-id-compra').value;
+                fetch(`/api/compra/${idCompra}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Compra editada correctamente');
+                        isEditMode = false;
+                        document.getElementById('form-title').textContent = "Agregar Compra y Detalle Compra";
+                        document.getElementById('submit-button').textContent = "Crear";
+                        document.getElementById('compra-form').reset();
+                        loadCompras(); // Cargar datos actualizados
+                    } else {
+                        alert('Error al editar la compra');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al editar la compra');
+                });
+            } else {
+                fetch('/api/compra', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Compra agregada correctamente');
+                        document.getElementById('compra-form').reset();
+                        loadCompras(); // Cargar datos actualizados
+                    } else {
+                        alert('Error al agregar la compra');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al agregar la compra');
+                });
+            }
+        });
+
+        function loadCompras() {
+            fetch('/api/compra')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.querySelector('#compra-table tbody');
+                tableBody.innerHTML = '';
+
+                data.forEach(compra => {
+                    const formattedDate = new Date(compra.Fecha).toLocaleDateString(); // Formato de fecha
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${compra.id_compra}</td>
+                        <td>${compra.Nit}</td>
+                        <td>${formattedDate}</td>
+                        <td>${compra.Valor}</td>
+                        <td>${compra.Iva}</td>
+                        <td>${compra.Total_pagar}</td>
+                        <td>${compra.id_productos}</td>
+                        <td>${compra.Cantidad}</td>
+                        <td>${compra.Estado}</td>
+                        <td>
+                            <button class="edit-button" onclick="editCompra('${compra.id_compra}')">Editar</button>
+                            <button class="delete-button" onclick="deleteCompra('${compra.id_compra}')">Eliminar</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar las compras');
+            });
+        }
+
+        function editCompra(id_compra) {
+            fetch(`/api/compra/${id_compra}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(compra => {
+                document.getElementById('id-compra').value = compra.id_compra;
+                document.getElementById('nit').value = compra.Nit;
+                document.getElementById('fecha').value = compra.Fecha.split('T')[0];
+                document.getElementById('valor').value = compra.Valor;
+                document.getElementById('iva').value = compra.Iva;
+                document.getElementById('total-pagar').value = compra.Total_pagar;
+                document.getElementById('id-producto').value = compra.id_productos;
+                document.getElementById('cantidad').value = compra.Cantidad;
+                document.getElementById('estado').value = compra.Estado;
+                document.getElementById('edit-id-compra').value = compra.id_compra;
+                document.getElementById('form-title').textContent = "Editar Compra";
+                document.getElementById('submit-button').textContent = "Actualizar";
+                isEditMode = true;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar los datos de la compra');
+            });
+        }
+
+        function deleteCompra(id_compra) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta compra?')) {
+                fetch(`/api/compra/${id_compra}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('Compra eliminada correctamente');
+                        loadCompras(); // Cargar datos actualizados
+                    } else {
+                        alert('Error al eliminar la compra');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la compra');
+                });
+            }
+        }
+
+        // Cargar las compras cuando la página se carga
+        document.addEventListener('DOMContentLoaded', loadCompras);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

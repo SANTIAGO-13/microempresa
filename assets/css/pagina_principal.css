@@ -1,0 +1,110 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #1DB2F2 0%, #08394F 100%);
+}
+
+.sidebar {
+    width: 240px;
+    background-color: #1B1B1B;
+    color: white;
+    position: fixed;
+    height: 100%;
+    padding-top: 20px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.sidebar .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    padding-left: 10px;
+}
+
+.sidebar .logo-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.sidebar nav ul li a {
+    color: #000000;
+    text-decoration: none;
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    width: 80%;
+    box-sizing: border-box;
+}
+
+.sidebar nav ul li a:hover,
+.sidebar nav ul li a.active {
+    background-color: #e0e0e0;
+}
+
+.content {
+    margin-left: 240px;
+    padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Asegura que el pie de página esté al final */
+}
+
+.main-content {
+    text-align: center; /* Centra el contenido */
+    margin-top: 20px; /* Subir el texto */
+    max-width: 600px; /* Ajusta el ancho máximo del contenedor */
+    margin-left: auto; /* Centra el contenedor */
+    margin-right: auto; /* Centra el contenedor */
+}
+
+.center-img {
+    max-width: 150px; /* Ajusta el tamaño de la imagen */
+    height: auto;
+}
+
+.info-text {
+    margin-top: 10px; /* Espaciado más pequeño */
+    font-size: 1em; /* Ajusta el tamaño del texto */
+    color: #ffffff; /* Color del texto */
+    line-height: 1.5; /* Mejora la legibilidad */
+    text-align: justify; /* Justifica el texto */
+    letter-spacing: -0.5px; /* Reduce el espaciado entre letras */
+}
+
+.bottom-img {
+    max-width: 600px; /* Aumentar el tamaño de la nueva imagen */
+    height: auto;
+    margin-top: 20px; /* Espaciado superior para la imagen */
+}
+
+.footer {
+    text-align: center; /* Centra el texto del pie de página */
+    margin-top: auto; /* Asegura que el pie de página esté al final */
+    padding: 10px 0; /* Espaciado superior e inferior */
+    color: #000000; /* Color del texto del pie de página */
+}
+
+
+
+
+
+
+
+

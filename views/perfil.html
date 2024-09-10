@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- Define el tipo de documento y la versión de HTML -->
+<html lang="es"> <!-- Establece el idioma del documento como español -->
+<head>
+    <meta charset="UTF-8"> <!-- Define la codificación de caracteres como UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configura la vista para dispositivos móviles -->
+    <title>Perfil Administrador</title> <!-- Título que aparece en la pestaña del navegador -->
+    <link rel="stylesheet" href="../assets/css/perfil.css"> <!-- Enlace a la hoja de estilos CSS local -->
+    <script>
+        function mostrarMensaje() { // Función para mostrar un mensaje de éxito
+            alert("¡Agregado exitosamente!"); // Muestra una alerta al usuario
+        }
+    </script>
+</head>
+<body>
+    <div class="sidebar"> <!-- Contenedor para la barra lateral -->
+        <div class="logo"> <!-- Contenedor para el logo y el saludo -->
+            <img src="../assets/css/img/logo.jpg" alt="MYP Logo" class="logo-img"> <!-- Imagen del logo -->
+            <h2>Bienvenidos</h2> <!-- Mensaje de bienvenida -->
+        </div>
+        <nav> <!-- Navegación principal -->
+            <ul> <!-- Lista de enlaces -->
+                <li><a href="pagina_principal.html">Home</a></li> <!-- Enlace a la página principal -->
+                <li><a href="perfil.html" class="active">Perfil</a></li> <!-- Enlace a la página de perfil, marcado como activo -->
+                <li><a href="gestion.html">Gestión</a></li> <!-- Enlace a la página de gestión -->
+                <li><a href="informes.html">Informes</a></li> <!-- Enlace a la página de informes -->
+                <li><a href="/">Salir</a></li> <!-- Enlace para salir, redirige a la página de inicio de sesión -->
+            </ul>
+        </nav>
+    </div>
+    <div class="content"> <!-- Contenedor principal del contenido -->
+        <h2>Perfil Administrador</h2> <!-- Título de la sección de perfil -->
+        <div class="profile-container"> <!-- Contenedor para el perfil -->
+            <div class="profile-picture"> <!-- Contenedor para la imagen del perfil -->
+                <img src="../assets/css/img/logoPerfil.jpg" alt="Profile Picture"> <!-- Imagen del perfil -->
+            </div>
+            <form action="/api/perfil" method="POST" onsubmit="mostrarMensaje()"> <!-- Formulario para actualizar el perfil -->
+                <input type="text" name="id_perfil" placeholder="ID Perfil" required> <!-- Campo de entrada para ID de perfil, obligatorio -->
+                <input type="text" name="Descripcion" placeholder="Descripción" required> <!-- Campo de entrada para descripción, obligatorio -->
+                <select name="Estado" required style="margin-bottom: 20px;"> <!-- Selector para el estado, obligatorio -->
+                    <option value="" disabled selected>Selecciona Estado</option> <!-- Opción por defecto deshabilitada -->
+                    <option value="Activo">Activo</option> <!-- Opción de estado: Activo -->
+                    <option value="Inactivo">Inactivo</option> <!-- Opción de estado: Inactivo -->
+                </select>
+                <button type="submit">Guardar</button> <!-- Botón para enviar el formulario -->
+            </form>
+        </div>
+    </div>
+</body>
+</html>

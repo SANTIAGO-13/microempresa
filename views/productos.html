@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Productos</title>
+    <link rel="stylesheet" href="../assets/css/productos.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Agregar Productos</h2>
+            </div>
+            <form id="product-form">
+                <label for="product-id">ID Productos</label>
+                <input type="text" id="product-id" name="product-id" required>
+
+                <label for="description">Descripción</label>
+                <input type="text" id="description" name="description" required>
+
+                <label for="quantity">Cantidad</label>
+                <input type="number" id="quantity" name="quantity" required>
+
+                <label for="unit-value">Valor unitario</label>
+                <input type="number" id="unit-value" name="unit-value" required>
+
+                <label for="status">Estado</label>
+                <select id="status" name="status">
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+
+                <div class="form-buttons">
+                    <button type="submit" class="create-button">Crear</button>
+                    <button type="button" class="exit-button" onclick="redirectToGestion()">Salir</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <div class="menu-bar">
+                <div class="menu-icon" onclick="showProductMenu()">&#9776;</div>
+                <span>Listado</span>
+            </div>
+            <table id="product-table">
+                <thead>
+                    <tr>
+                        <th>ID Productos</th>
+                        <th>Descripción</th>
+                        <th>Cantidad</th>
+                        <th>Valor unitario</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se agregarán las filas con los datos de los productos -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function redirectToGestion() {
+            window.location.href = 'gestion.html';
+        }
+
+        function showProductMenu() {
+            alert('Agregar producto');
+            window.location.href = 'productos.html';
+        }
+
+        document.getElementById('product-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const productId = document.getElementById('product-id').value;
+            const description = document.getElementById('description').value;
+            const quantity = document.getElementById('quantity').value;
+            const unitValue = document.getElementById('unit-value').value;
+            const status = document.getElementById('status').value;
+
+            fetch('/api/productos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id_productos: productId,
+                    Descripción: description,
+                    Cantidad: quantity,
+                    Valor_unitario: unitValue,
+                    Estado: status
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const table = document.getElementById('product-table').getElementsByTagName('tbody')[0];
+                    const newRow = table.insertRow();
+                    newRow.insertCell(0).textContent = productId;
+                    newRow.insertCell(1).textContent = description;
+                    newRow.insertCell(2).textContent = quantity;
+                    newRow.insertCell(3).textContent = unitValue;
+                    newRow.insertCell(4).textContent = status;
+
+                    const actionsCell = newRow.insertCell(5);
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Editar';
+                    editButton.className = 'edit-button';
+                    editButton.addEventListener('click', function() {
+                        editProduct(newRow, productId);
+                    });
+                    actionsCell.appendChild(editButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Eliminar';
+                    deleteButton.className = 'delete-button';
+                    deleteButton.addEventListener('click', function() {
+                        deleteProduct(newRow, productId);
+                    });
+                    actionsCell.appendChild(deleteButton);
+
+                    document.getElementById('product-form').reset();
+                } else {
+                    alert('Error al agregar el producto: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al agregar el producto.');
+            });
+        });
+
+        window.addEventListener('load', function() {
+            fetch('/api/productos')
+                .then(response => response.json())
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        const table = document.getElementById('product-table').getElementsByTagName('tbody')[0];
+                        data.forEach(product => {
+                            const newRow = table.insertRow();
+                            newRow.insertCell(0).textContent = product.id_productos;
+                            newRow.insertCell(1).textContent = product.Descripción;
+                            newRow.insertCell(2).textContent = product.Cantidad;
+                            newRow.insertCell(3).textContent = product.Valor_unitario;
+                            newRow.insertCell(4).textContent = product.Estado;
+
+                            const actionsCell = newRow.insertCell(5);
+                            const editButton = document.createElement('button');
+                            editButton.textContent = 'Editar';
+                            editButton.className = 'edit-button';
+                            editButton.addEventListener('click', function() {
+                                editProduct(newRow, product.id_productos);
+                            });
+                            actionsCell.appendChild(editButton);
+
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = 'Eliminar';
+                            deleteButton.className = 'delete-button';
+                            deleteButton.addEventListener('click', function() {
+                                deleteProduct(newRow, product.id_productos);
+                            });
+                            actionsCell.appendChild(deleteButton);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        function editProduct(row, productId) {
+            const description = prompt('Ingrese la nueva descripción:', row.cells[1].textContent);
+            const quantity = prompt('Ingrese la nueva cantidad:', row.cells[2].textContent);
+            const unitValue = prompt('Ingrese el nuevo valor unitario:', row.cells[3].textContent);
+            const status = prompt('Ingrese el nuevo estado (activo/inactivo):', row.cells[4].textContent);
+
+            if (description && quantity && unitValue && status) {
+                fetch(`/api/productos/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Descripción: description,
+                        Cantidad: quantity,
+                        Valor_unitario: unitValue,
+                        Estado: status
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        row.cells[1].textContent = description;
+                        row.cells[2].textContent = quantity;
+                        row.cells[3].textContent = unitValue;
+                        row.cells[4].textContent = status;
+                    } else {
+                        alert('Error al editar el producto: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al editar el producto.');
+                });
+            }
+        }
+
+        function deleteProduct(row, productId) {
+            if (confirm('¿Está seguro de que desea eliminar este producto?')) {
+                fetch(`/api/productos/${productId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        row.remove();
+                    } else {
+                        alert('Error al eliminar el producto: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar el producto.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
+

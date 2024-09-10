@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas</title>
+    <link rel="stylesheet" href="../assets/css/venta.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Agregar Venta y Detalle Venta</h2>
+            </div>
+            <form id="venta-form">
+                <label for="venta-id">ID venta</label>
+                <input type="text" id="venta-id" name="venta-id" required>
+
+                <label for="cliente-id">ID cliente</label>
+                <input type="text" id="cliente-id" name="cliente-id" required>
+
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="fecha" required>
+
+                <label for="valor">Valor</label>
+                <input type="number" id="valor" name="valor" step="0.01" min="0" required>
+
+                <label for="iva">IVA</label>
+                <input type="number" id="iva" name="iva" step="0.01" min="0" required>
+
+                <label for="producto-id">ID productos</label>
+                <input type="text" id="producto-id" name="producto-id" required>
+
+                <label for="cantidad">Cantidad</label>
+                <input type="number" id="cantidad" name="cantidad" step="1" min="1" required>
+
+                <label for="valor-unitario">Valor unitario</label>
+                <input type="number" id="valor-unitario" name="valor-unitario" step="0.01" min="0" required>
+
+                <label for="total-pagar">Total a pagar</label>
+                <input type="number" id="total-pagar" name="total-pagar" step="0.01" min="0" required>
+
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" required>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+
+                <div class="form-buttons">
+                    <button type="submit" class="create-button">Crear</button>
+                    <button type="button" class="exit-button" onclick="redirectToGestion()">Salir</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <div class="menu-bar">
+                <div class="menu-icon" onclick="showMenu()">&#9776;</div>
+                <span>Listado</span>
+            </div>
+            <table id="venta-table">
+                <thead>
+                    <tr>
+                        <th>ID venta</th>
+                        <th>ID cliente</th>
+                        <th>Fecha</th>
+                        <th>Valor</th>
+                        <th>IVA</th>
+                        <th>ID productos</th>
+                        <th>Cantidad</th>
+                        <th>Valor unitario</th>
+                        <th>Total a pagar</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Las filas de las ventas se llenarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="../assets/js/venta.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,99 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #1DB2F2 0%, #08394F 100%);
+}
+
+.sidebar {
+    width: 240px;
+    background-color: #1B1B1B;
+    color: white;
+    position: fixed;
+    height: 100%;
+    padding-top: 20px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.sidebar .logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Alinea al inicio para mantener el logo y el texto alineados */
+    margin-bottom: 30px;
+    padding-left: 20px; /* Ajuste para separar el logo del borde izquierdo */
+}
+
+.sidebar .logo-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.sidebar .logo-text {
+    font-size: 24px;
+    color: #FFFFFF;
+    font-weight: bold; /* Asegura que el texto esté en negrilla */
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.sidebar nav ul li a {
+    color: #000000;
+    text-decoration: none;
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    width: 80%;
+    box-sizing: border-box;
+}
+
+.sidebar nav ul li a:hover,
+.sidebar nav ul li a.active {
+    background-color: #e0e0e0;
+}
+
+.content {
+    margin-left: 240px;
+    padding: 20px;
+    height: 100vh;
+    text-align: center;
+}
+
+.content h2 {
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 50px;
+}
+
+.gestion-button {
+    display: inline-block;
+    padding: 20px 30px;
+    background-color: #ffffff;
+    color: #000000;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 2px solid #000;
+    transition: background-color 0.3s ease;
+}
+
+.gestion-button:hover {
+    background-color: #e0e0e0;
+}

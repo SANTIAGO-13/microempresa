@@ -1,0 +1,56 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencias de Node.js
+node_modules/
+package-lock.json
+yarn.lock
+
+# Directorios del entorno de desarrollo
+.env
+.vscode/
+.idea/
+
+# Compilación
+dist/
+build/
+out/
+
+# Archivos temporales y backups
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# Directorios de Git
+.git/
+.gitignore
+
+# Archivos de configuración del editor
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# Archivos de Python (si estás usando Python)
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Archivos de MySQL (si estás usando MySQL)
+*.sql
+
+# Librerías o entornos virtuales
+venv/
+env/
+.venv/
+.env/
+pip-log.txt

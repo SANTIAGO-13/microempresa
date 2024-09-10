@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar País</title>
+    <link rel="stylesheet" href="../assets/css/pais.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Agregar País</h2>
+            </div>
+            <form id="pais-form">
+                <label for="id-pais">ID País</label>
+                <input type="text" id="id-pais" name="id-pais" required>
+
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label for="estado">Estado</label>
+                <select id="estado" name="estado" required>
+                    <option value="activo">Activo</option>
+                    <option value="inactivo">Inactivo</option>
+                </select>
+
+                <div class="form-buttons">
+                    <button type="submit" class="create-button">Crear</button>
+                    <button type="button" class="exit-button" onclick="redirectToListado()">Salir</button>
+                </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <div class="menu-bar">
+                <div class="menu-icon" onclick="showMenu()">&#9776;</div>
+                <span>Listado</span>
+            </div>
+            <table id="pais-table">
+                <thead>
+                    <tr>
+                        <th>ID País</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se agregarán las filas con los datos de países -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function redirectToListado() {
+            window.location.href = 'gestion.html'; // Cambia esto a la ruta correcta si es necesario
+        }
+
+        function showMenu() {
+            const option = prompt('Selecciona una opción:\n1. Agregar representante legal\n2. Agregar compra\n3. Agregar país\n4. Agregar departamento\n5. Agregar ciudad');
+            switch(option) {
+                case '1':
+                    window.location.href = 'representante.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '2':
+                    window.location.href = 'compra.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '3':
+                    window.location.href = 'pais.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '4':
+                    window.location.href = 'departamento.html'; // Verifica que esta ruta es correcta
+                    break;
+                case '5':
+                    window.location.href = 'cuidad.html'; // Corrige la ruta aquí
+                    break;
+                default:
+                    alert('Opción no válida.');
+            }
+        }
+
+        document.getElementById('pais-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const idPais = document.getElementById('id-pais').value.trim();
+            const nombre = document.getElementById('nombre').value.trim();
+            const estado = document.getElementById('estado').value;
+
+            fetch('/api/pais', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_pais: idPais,
+                    Nombre: nombre,
+                    Estado: estado
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadPaises(); // Recargar la tabla con los datos actualizados
+                    document.getElementById('pais-form').reset();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al registrar el país.');
+            });
+        });
+
+        function editRow(button) {
+            const row = button.parentNode.parentNode;
+            const cells = row.getElementsByTagName('td');
+
+            const idPais = cells[0].innerText.trim();
+            const nuevoNombre = prompt('Editar nombre del país:', cells[1].innerText.trim());
+            const nuevoEstado = prompt('Editar estado del país:', cells[2].innerText.trim());
+
+            if (nuevoNombre && nuevoEstado) {
+                fetch(`/api/pais/${idPais}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        Nombre: nuevoNombre,
+                        Estado: nuevoEstado
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadPaises(); // Recargar la tabla con los datos actualizados
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al editar el país.');
+                });
+            }
+        }
+
+        function deleteRow(button) {
+            if (confirm('¿Estás seguro de que deseas eliminar este país?')) {
+                const row = button.parentNode.parentNode;
+                const idPais = row.getElementsByTagName('td')[0].innerText.trim();
+
+                fetch(`/api/pais/${idPais}`, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadPaises(); // Recargar la tabla con los datos actualizados
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar el país.');
+                });
+            }
+        }
+
+        function loadPaises() {
+            fetch('/api/pais')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('pais-table').getElementsByTagName('tbody')[0];
+                    tableBody.innerHTML = ''; // Limpiar la tabla antes de cargar nuevos datos
+
+                    data.forEach(pais => {
+                        const newRow = tableBody.insertRow();
+                        newRow.innerHTML = `
+                            <td>${pais.id_pais}</td>
+                            <td>${pais.Nombre}</td>
+                            <td>${pais.Estado}</td>
+                            <td>
+                                <button class="edit-button" onclick="editRow(this)">Editar</button>
+                                <button class="delete-button" onclick="deleteRow(this)">Eliminar</button>
+                            </td>
+                        `;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar los países:', error);
+                });
+        }
+
+        window.onload = loadPaises;
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

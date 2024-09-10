@@ -1,0 +1,238 @@
+<!DOCTYPE html> <!-- Define el tipo de documento y la versión de HTML -->
+<html lang="es"> <!-- Establece el idioma del documento como español -->
+<head>
+    <meta charset="UTF-8"> <!-- Define la codificación de caracteres como UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configura la vista para dispositivos móviles -->
+    <title>Inventario</title> <!-- Título que aparece en la pestaña del navegador -->
+    <link rel="stylesheet" href="/assets/css/inventario.css"> <!-- Enlace a la hoja de estilos CSS local -->
+</head>
+<body>
+    <div class="container"> <!-- Contenedor principal -->
+        <div class="form-container"> <!-- Contenedor para el formulario de agregar inventario -->
+            <div class="form-header"> <!-- Encabezado del formulario -->
+                <h2>Agregar Inventario</h2> <!-- Título del formulario -->
+            </div>
+            <form id="inventario-form"> <!-- Formulario para agregar inventario -->
+                <label for="id_productos">ID del Producto</label> <!-- Etiqueta para el campo ID del producto -->
+                <input type="text" id="id_productos" name="id_productos" required> <!-- Campo de entrada para ID del producto -->
+
+                <label for="Cantidad">Cantidad</label> <!-- Etiqueta para el campo de cantidad -->
+                <input type="number" id="Cantidad" name="Cantidad" required> <!-- Campo de entrada para cantidad -->
+
+                <label for="stock_min">Stock Mínimo</label> <!-- Etiqueta para el campo de stock mínimo -->
+                <input type="number" id="stock_min" name="stock_min" required> <!-- Campo de entrada para stock mínimo -->
+
+                <label for="stock_max">Stock Máximo</label> <!-- Etiqueta para el campo de stock máximo -->
+                <input type="number" id="stock_max" name="stock_max" required> <!-- Campo de entrada para stock máximo -->
+
+                <label for="Estado">Estado</label> <!-- Etiqueta para el campo de estado -->
+                <select id="Estado" name="Estado" required> <!-- Selector para el estado -->
+                    <option value="Activo">Activo</option> <!-- Opción: Activo -->
+                    <option value="Inactivo">Inactivo</option> <!-- Opción: Inactivo -->
+                </select>
+
+                <div class="form-buttons"> <!-- Contenedor para los botones del formulario -->
+                    <button type="submit" class="create-button">Crear</button> <!-- Botón para crear el inventario -->
+                    <button type="button" class="exit-button" onclick="location.href='/gestion.html';">Salir</button> <!-- Botón para salir -->
+                </div>
+            </form>
+        </div>
+
+        <div class="table-container"> <!-- Contenedor para la tabla de inventario -->
+            <div class="menu-bar"> <!-- Barra de menú en la parte superior de la tabla -->
+                <span class="menu-icon" onclick="showMessage();">&#9776;</span> Listado <!-- Icono de menú que muestra un mensaje -->
+            </div>
+            <table> <!-- Tabla para mostrar el inventario -->
+                <thead>
+                    <tr>
+                        <th>ID Producto</th>
+                        <th>Cantidad</th>
+                        <th>Stock Mínimo</th>
+                        <th>Stock Máximo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="inventario-lista"> <!-- Cuerpo de la tabla donde se insertarán las filas dinámicamente -->
+                    <!-- Aquí se insertarán las filas de inventario dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para editar producto -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Editar Producto</h2>
+            <form id="edit-form">
+                <input type="hidden" id="edit-id_productos"> <!-- Campo oculto para el ID del producto -->
+                <label for="edit-Cantidad">Cantidad</label>
+                <input type="number" id="edit-Cantidad" name="edit-Cantidad" required>
+                
+                <label for="edit-stock_min">Stock Mínimo</label>
+                <input type="number" id="edit-stock_min" name="edit-stock_min" required>
+                
+                <label for="edit-stock_max">Stock Máximo</label>
+                <input type="number" id="edit-stock_max" name="edit-stock_max" required>
+                
+                <label for="edit-Estado">Estado</label>
+                <select id="edit-Estado" name="edit-Estado" required>
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                </select>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="save-button">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('inventario-form').addEventListener('submit', function(event) { // Agrega un evento al formulario
+            event.preventDefault(); // Previene el envío del formulario por defecto
+
+            const data = { // Crea un objeto con los datos del formulario
+                id_productos: document.getElementById('id_productos').value,
+                Cantidad: document.getElementById('Cantidad').value,
+                stock_min: document.getElementById('stock_min').value,
+                stock_max: document.getElementById('stock_max').value,
+                Estado: document.getElementById('Estado').value
+            };
+
+            fetch('/api/inventario', { // Envía una solicitud POST a la API
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) // Convierte el objeto de datos a JSON
+            })
+            .then(response => response.json()) // Convierte la respuesta a JSON
+            .then(data => {
+                if (data.success) {
+                    alert('Inventario agregado exitosamente.'); // Mensaje de éxito
+                    loadInventario(); // Carga la lista de inventario
+                } else {
+                    alert('Error: ' + data.message); // Mensaje de error
+                }
+            });
+        });
+
+        function loadInventario() { // Función para cargar el inventario
+            fetch('/api/inventario') // Envía una solicitud GET a la API
+                .then(response => response.json()) // Convierte la respuesta a JSON
+                .then(data => {
+                    const inventarioLista = document.getElementById('inventario-lista');
+                    inventarioLista.innerHTML = ''; // Limpiar la tabla
+
+                    data.forEach(item => { // Itera sobre cada item del inventario
+                        const row = document.createElement('tr'); // Crea una nueva fila
+                        row.innerHTML = `
+                            <td>${item.id_productos}</td>
+                            <td>${item.Cantidad}</td>
+                            <td>${item['Stock min']}</td>
+                            <td>${item['Stock max']}</td>
+                            <td>${item.Estado}</td>
+                            <td>
+                                <button class="edit-button" onclick="editItem('${item.id_productos}')">Editar</button>
+                                <button class="delete-button" onclick="deleteItem('${item.id_productos}')">Eliminar</button>
+                            </td>
+                        `;
+                        inventarioLista.appendChild(row); // Agrega la fila a la tabla
+                    });
+                })
+                .catch(error => {
+                    alert('Error al cargar el inventario: ' + error.message); // Mensaje de error
+                });
+        }
+
+        function showMessage() { // Función para mostrar un mensaje de confirmación
+            if (confirm('¿Deseas agregar un producto?')) {
+                location.href = '/productos.html'; // Redirige a la página de productos
+            }
+        }
+
+        function editItem(id) { // Función para editar un producto
+            fetch(`/api/inventario/${id}`) // Solicita los datos del producto a la API
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const producto = data[0];
+                        document.getElementById('edit-id_productos').value = producto.id_productos;
+                        document.getElementById('edit-Cantidad').value = producto.Cantidad;
+                        document.getElementById('edit-stock_min').value = producto['Stock min'];
+                        document.getElementById('edit-stock_max').value = producto['Stock max'];
+                        document.getElementById('edit-Estado').value = producto.Estado;
+                        document.getElementById('editModal').style.display = 'block'; // Muestra el modal
+                    } else {
+                        alert('Producto no encontrado.');
+                    }
+                })
+                .catch(error => {
+                    alert('Error al cargar el producto: ' + error.message); // Mensaje de error
+                });
+        }
+
+        document.getElementById('edit-form').addEventListener('submit', function(event) { // Evento para guardar cambios
+            event.preventDefault();
+
+            const id = document.getElementById('edit-id_productos').value;
+            const data = {
+                Cantidad: document.getElementById('edit-Cantidad').value,
+                stock_min: document.getElementById('edit-stock_min').value,
+                stock_max: document.getElementById('edit-stock_max').value,
+                Estado: document.getElementById('edit-Estado').value
+            };
+
+            fetch(`/api/inventario/${id}`, { // Envía una solicitud PUT a la API
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Producto actualizado exitosamente.');
+                    loadInventario();
+                    closeModal(); // Cierra el modal
+                } else {
+                    alert('Error: ' + data.message); // Mensaje de error
+                }
+            })
+            .catch(error => {
+                alert('Error al actualizar el producto: ' + error.message); // Mensaje de error
+            });
+        });
+
+        function deleteItem(id) { // Función para eliminar un producto
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                fetch(`/api/inventario/${id}`, { // Envía una solicitud DELETE a la API
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Producto eliminado exitosamente.');
+                        loadInventario();
+                    } else {
+                        alert('Error: ' + data.message); // Mensaje de error
+                    }
+                })
+                .catch(error => {
+                    alert('Error al eliminar el producto: ' + error.message); // Mensaje de error
+                });
+            }
+        }
+
+        function closeModal() { // Función para cerrar el modal
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        loadInventario(); // Carga el inventario cuando se carga la página
+    </script>
+</body>
+</html>
+

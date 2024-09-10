@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informes</title>
+    <link rel="stylesheet" href="../assets/css/informes.css"> <!-- Ruta correcta -->
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="../assets/css/img/logo.jpg" alt="Logo" class="logo-img">
+            <span class="logo-text">Bienvenidos</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="pagina_principal.html">Home</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="gestion.html">Gestión</a></li>
+                <li><a href="informes.html" class="active">Informes</a></li>
+                <li><a href="/">Salir</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content">
+        <h2>Crear informe de novedades</h2>
+        <form id="informe-form" onsubmit="return submitInformeForm(event)">
+            <label for="fecha-inicial">Fecha inicial:</label>
+            <input type="date" id="fecha-inicial" name="fecha-inicial" required>
+
+            <label for="fecha-final">Fecha final:</label>
+            <input type="date" id="fecha-final" name="fecha-final" required>
+            
+            <label for="gestion">Gestión:</label>
+            <select id="gestion" name="gestion" required>
+                <option value="compra">Compra</option>
+                <option value="venta">Venta</option>
+                <option value="nota_de_credito">Nota de Crédito</option>
+                <option value="productos">Productos</option>
+                <option value="inventario">Inventario</option>
+            </select>
+
+            <div class="button-container">
+                <button type="submit">Generar Informe</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function submitInformeForm(event) {
+            event.preventDefault(); // Evitar que el formulario se envíe de manera tradicional
+    
+            const fechaInicial = document.getElementById('fecha-inicial').value;
+            const fechaFinal = document.getElementById('fecha-final').value;
+            const gestion = document.getElementById('gestion').value;
+    
+            // Redirigir a informe_resultado.html con los parámetros
+            window.location.href = `informe_resultado.html?fechaInicial=${fechaInicial}&fechaFinal=${fechaFinal}&gestion=${gestion}`;
+        }
+    </script>
+    
+</body>
+</html>
+
+

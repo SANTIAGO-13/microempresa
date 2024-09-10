@@ -1,0 +1,143 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #1DB2F2 0%, #08394F 100%);
+}
+
+.sidebar {
+    width: 240px;
+    background-color: #1B1B1B;
+    color: white;
+    position: fixed;
+    height: 100%;
+    padding-top: 20px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.sidebar .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    padding-left: 10px;
+}
+
+.sidebar .logo-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.sidebar nav ul li a {
+    color: #000000;
+    text-decoration: none;
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    width: 80%;
+    box-sizing: border-box;
+}
+
+.sidebar nav ul li a:hover,
+.sidebar nav ul li a.active {
+    background-color: #e0e0e0;
+}
+
+.content {
+    margin-left: 240px;
+    padding: 20px;
+    height: 100vh;
+    text-align: center;
+}
+
+.content h2 {
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.profile-container {
+    text-align: center; /* Centramos todo el contenido dentro del contenedor */
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.profile-picture img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto; /* Centramos la imagen del perfil */
+}
+
+form input[type="text"], form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 2px solid #000;
+}
+
+form input[type="text"]:focus, form input[type="email"]:focus {
+    outline: none;
+    border-color: #1DB2F2;
+    box-shadow: 0 0 10px #1DB2F2;
+}
+
+form select {
+    margin-bottom: 20px; /* Agrega espacio entre la lista desplegable y el botón */
+}
+
+
+.change-password {
+    display: block;
+    color: #ffffff;
+    text-decoration: none;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.change-password:hover {
+    text-decoration: underline;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(to right, #1DB2F2 0%, #08394F 100%);
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(to right, #08394F 0%, #1DB2F2 100%);
+}
+
+button:focus {
+    outline: none;
+    box-shadow: 0 0 10px #1DB2F2;
+}
+
+
+
+

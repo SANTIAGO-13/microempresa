@@ -1,0 +1,25 @@
+{
+  "name": "proyecto-microempresa-2",
+  "version": "1.0.0",
+  "description": "Proyecto para la gestión de una microempresa",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "chart.js": "^4.4.4",
+    "express": "^4.19.2",
+    "express-handlebars": "^8.0.1",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.11.0",
+    "react-chartjs-2": "^5.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

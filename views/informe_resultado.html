@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe de Resultados</title>
+    <link rel="stylesheet" href="/assets/css/informe_resultado.css"> <!-- Ruta corregida -->
+</head>
+<body>
+    <div class="content">
+        <h2 id="informe-title">Informe de Resultados</h2>
+        <div id="informe-container" style="overflow-x: auto;">
+            <!-- Aquí se añadirá la tabla -->
+        </div>
+        <div class="button-container">
+            <button onclick="window.history.back()" class="back-button">Volver</button>
+            <button onclick="generatePDF()" class="pdf-button">Generar PDF</button> <!-- Botón para PDF -->
+        </div>
+    </div>
+
+    <!-- Incluye jsPDF desde un CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        // Obtener parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const fechaInicial = urlParams.get('fechaInicial');
+        const fechaFinal = urlParams.get('fechaFinal');
+        const gestion = urlParams.get('gestion');
+
+        // Actualizar el título según el tipo de informe
+        document.getElementById('informe-title').textContent = `Informe de Resultados de ${capitalizeFirstLetter(gestion)}`;
+
+        // Hacer la solicitud a la API
+        fetch(`/api/informe?fechaInicial=${fechaInicial}&fechaFinal=${fechaFinal}&gestion=${gestion}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const informeContainer = document.getElementById('informe-container');
+                // Mostrar los resultados
+                if (data.length > 0) {
+                    const table = document.createElement('table');
+                    table.innerHTML = getTableHeaders(gestion); // Encabezados de la tabla
+
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = getTableRow(gestion, item);
+                        table.appendChild(row);
+                    });
+
+                    informeContainer.appendChild(table);
+                } else {
+                    informeContainer.innerHTML = '<p>No se encontraron resultados.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar el informe:', error);
+                document.getElementById('informe-container').innerHTML = '<p>Error al cargar el informe.</p>';
+            });
+
+        // Función para generar el PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.text(`Informe de Resultados de ${capitalizeFirstLetter(gestion)}`, 10, 10);
+
+            // Convertir la tabla en una imagen para incluir en el PDF
+            const table = document.querySelector('table');
+            if (table) {
+                doc.autoTable({ html: table, startY: 20 });
+            }
+
+            doc.save(`informe_${gestion}.pdf`);
+        }
+
+        // Función para obtener los encabezados de la tabla según el tipo de informe
+        function getTableHeaders(gestion) {
+            if (gestion === 'venta') {
+                return `<tr><th>ID Venta</th><th>Fecha</th><th>ID Cliente</th><th>Valor</th><th>IVA</th><th>Total a Pagar</th><th>Estado</th></tr>`;
+            } else if (gestion === 'compra') {
+                return `<tr><th>ID Compra</th><th>Fecha</th><th>NIT</th><th>Valor</th><th>IVA</th><th>Total a Pagar</th><th>Estado</th></tr>`;
+            } else if (gestion === 'nota_de_credito') {
+                return `<tr><th>ID Nota Crédito</th><th>ID Venta</th><th>Fecha</th><th>Razón de Devolución</th><th>Monto Total</th><th>ID Cliente</th><th>Estado</th></tr>`;
+            } else if (gestion === 'productos') {
+                return `<tr><th>ID Producto</th><th>Descripción</th><th>Cantidad</th><th>Valor Unitario</th><th>Estado</th></tr>`;
+            } else if (gestion === 'inventario') {
+                return `<tr><th>ID Producto</th><th>Cantidad</th><th>Stock Min</th><th>Stock Max</th><th>Estado</th></tr>`;
+            }
+        }
+
+        // Función para obtener las filas de la tabla según el tipo de informe
+        function getTableRow(gestion, item) {
+            if (gestion === 'venta') {
+                return `<td>${item.id_venta || 'N/A'}</td><td>${formatDate(item.Fecha) || 'N/A'}</td><td>${item.id_cliente || 'N/A'}</td><td>${item.Valor || 'N/A'}</td><td>${item.Iva || 'N/A'}</td><td>${item.Total_pagar || 'N/A'}</td><td>${item.Estado || 'N/A'}</td>`;
+            } else if (gestion === 'compra') {
+                return `<td>${item.id_compra || 'N/A'}</td><td>${formatDate(item.Fecha) || 'N/A'}</td><td>${item.Nit || 'N/A'}</td><td>${item.Valor || 'N/A'}</td><td>${item.Iva || 'N/A'}</td><td>${item.Total_pagar || 'N/A'}</td><td>${item.Estado || 'N/A'}</td>`;
+            } else if (gestion === 'nota_de_credito') {
+                return `<td>${item.id_NotaCredito || 'N/A'}</td><td>${item.id_venta || 'N/A'}</td><td>${formatDate(item.Fech_factra) || 'N/A'}</td><td>${item.Rzn_devolucion || 'N/A'}</td><td>${item.Mnt_total || 'N/A'}</td><td>${item.id_cliente || 'N/A'}</td><td>${item.Estado || 'N/A'}</td>`;
+            } else if (gestion === 'productos') {
+                return `<td>${item.id_productos || 'N/A'}</td><td>${item.Descripción || 'N/A'}</td><td>${item.Cantidad || 'N/A'}</td><td>${item.Valor_unitario || 'N/A'}</td><td>${item.Estado || 'N/A'}</td>`;
+            } else if (gestion === 'inventario') {
+                return `<td>${item.id_productos || 'N/A'}</td><td>${item.Cantidad || 'N/A'}</td><td>${item['Stock min'] || 'N/A'}</td><td>${item['Stock max'] || 'N/A'}</td><td>${item.Estado || 'N/A'}</td>`;
+            }
+        }
+
+        // Función para capitalizar la primera letra
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Función para formatear fechas (puedes personalizar esto)
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            return new Date(dateString).toLocaleDateString('es-ES', options);
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+

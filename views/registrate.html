@@ -1,0 +1,153 @@
+<!DOCTYPE html> <!-- Define el tipo de documento y la versión de HTML -->
+<html lang="es"> <!-- Establece el idioma del documento como español -->
+<head>
+    <meta charset="UTF-8"> <!-- Define la codificación de caracteres como UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Configura la vista para dispositivos móviles -->
+    <title>Registro</title> <!-- Título que aparece en la pestaña del navegador -->
+    <link rel="stylesheet" href="../assets/css/styles.css"> <!-- Enlace a la hoja de estilos CSS local -->
+</head>
+<body>
+    <div class="container"> <!-- Contenedor principal de la página -->
+        <div class="form-container"> <!-- Contenedor para el formulario de registro -->
+            <h2 class="header">Registro</h2> <!-- Título principal del formulario -->
+            <p class="subheader">Nuevo Usuario</p> <!-- Subtítulo que indica que es para nuevos usuarios -->
+            <p class="instruction">Date de alta llenando los siguientes datos.</p> <!-- Instrucción para el usuario -->
+            <form id="registerForm"> <!-- Formulario para el registro -->
+                <!-- Aquí va el contenido del formulario -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_usuario">ID de Usuario</label> <!-- Etiqueta para el campo de ID de usuario -->
+                        <input type="text" id="id_usuario" name="id_usuario" placeholder="ID de Usuario" required> <!-- Campo de entrada para el ID de usuario, obligatorio -->
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre1">Nombre</label> <!-- Etiqueta para el campo de nombre -->
+                        <input type="text" id="nombre1" name="Nombre1" placeholder="Nombre" required> <!-- Campo de entrada para el primer nombre, obligatorio -->
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre2">Segundo Nombre</label> <!-- Etiqueta para el segundo nombre -->
+                        <input type="text" id="nombre2" name="Nombre2" placeholder="Segundo Nombre"> <!-- Campo de entrada para el segundo nombre -->
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="apellido1">Apellido</label> <!-- Etiqueta para el campo de apellido -->
+                        <input type="text" id="apellido1" name="Apellido1" placeholder="Apellido" required> <!-- Campo de entrada para el primer apellido, obligatorio -->
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido2">Segundo Apellido</label> <!-- Etiqueta para el segundo apellido -->
+                        <input type="text" id="apellido2" name="Apellido2" placeholder="Segundo Apellido"> <!-- Campo de entrada para el segundo apellido -->
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label> <!-- Etiqueta para el campo de email -->
+                        <input type="email" id="email" name="Correo" placeholder="hey@tuemail.com" required> <!-- Campo de entrada para el email, obligatorio -->
+                    </div>
+                    <div class="form-group">
+                        <label for="celular">Celular</label> <!-- Etiqueta para el campo de celular -->
+                        <input type="text" id="celular" name="Celular" placeholder="Número de celular" required> <!-- Campo de entrada para el número de celular, obligatorio -->
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label> <!-- Etiqueta para el campo de dirección -->
+                        <input type="text" id="direccion" name="Dirección" placeholder="Dirección" required> <!-- Campo de entrada para la dirección, obligatorio -->
+                    </div>
+                    <div class="form-group">
+                        <label for="pais">País</label> <!-- Etiqueta para el campo de país -->
+                        <input type="text" id="pais" name="id_país" placeholder="País" required> <!-- Campo de entrada para el país, obligatorio -->
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departamento">Departamento</label> <!-- Etiqueta para el campo de departamento -->
+                        <input type="text" id="departamento" name="id_dpto" placeholder="Departamento" required> <!-- Campo de entrada para el departamento, obligatorio -->
+                    </div>
+                    <div class="form-group">
+                        <label for="ciudad">Ciudad</label> <!-- Etiqueta para el campo de ciudad -->
+                        <input type="text" id="ciudad" name="id_cdad" placeholder="Ciudad" required> <!-- Campo de entrada para la ciudad, obligatorio -->
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="rol">Rol</label> <!-- Etiqueta para el campo de rol -->
+                        <select id="rol" name="Usuario" required> <!-- Selector para el rol del usuario, obligatorio -->
+                            <option value="Cliente">Cliente</option> <!-- Opción de rol: Cliente -->
+                            <option value="Administrador">Administrador</option> <!-- Opción de rol: Administrador -->
+                            <option value="Gerente Administrativo">Gerente Administrativo</option> <!-- Opción de rol: Gerente Administrativo -->
+                            <option value="Empleado">Empleado</option> <!-- Opción de rol: Empleado -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label> <!-- Etiqueta para el campo de estado -->
+                        <select id="estado" name="Estado" required> <!-- Selector para el estado del usuario, obligatorio -->
+                            <option value="Activo">Activo</option> <!-- Opción de estado: Activo -->
+                            <option value="Inactivo">Inactivo</option> <!-- Opción de estado: Inactivo -->
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contrasena">Contraseña</label> <!-- Etiqueta para el campo de contraseña -->
+                        <input type="password" id="contrasena" name="contrasena" placeholder="Introduce tu contraseña" required> <!-- Campo de entrada para la contraseña, obligatorio -->
+                    </div>
+                    <div class="form-group">
+                        <label for="id_perfil">ID de Perfil</label> <!-- Etiqueta para el campo de ID de perfil -->
+                        <input type="text" id="id_perfil" name="id_perfil" placeholder="ID de Perfil" required> <!-- Campo de entrada para el ID de perfil, obligatorio -->
+                    </div>
+                </div>
+                <div class="form-buttons"> <!-- Contenedor para los botones del formulario -->
+                    <button type="submit">Guardar</button> <!-- Botón para enviar el formulario -->
+                    <button type="button" class="cancel" onclick="window.location.href='/';">Cancelar</button> <!-- Botón para cancelar y redirigir a la página de inicio -->
+                </div>
+            </form>
+            <p class="switch">¿Ya tienes cuenta? <a href="/"><strong>Inicia sesión</strong></a></p> <!-- Enlace para iniciar sesión si ya tiene cuenta -->
+        </div>
+    </div>
+
+    <script>
+        // Añade un evento al formulario para manejar el envío
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Previene el comportamiento por defecto del formulario
+
+            // Crea un objeto con los datos del formulario
+            const formData = {
+                id_usuario: document.getElementById('id_usuario').value,
+                Nombre1: document.getElementById('nombre1').value,
+                Nombre2: document.getElementById('nombre2').value,
+                Apellido1: document.getElementById('apellido1').value,
+                Apellido2: document.getElementById('apellido2').value,
+                Dirección: document.getElementById('direccion').value,
+                id_país: document.getElementById('pais').value,
+                id_dpto: document.getElementById('departamento').value,
+                id_cdad: document.getElementById('ciudad').value,
+                Celular: document.getElementById('celular').value,
+                Correo: document.getElementById('email').value,
+                Usuario: document.getElementById('rol').value,
+                contrasena: document.getElementById('contrasena').value,
+                Estado: document.getElementById('estado').value,
+                id_perfil: document.getElementById('id_perfil').value
+            };
+
+            // Realiza una solicitud POST a la API de registro
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // Indica que el cuerpo de la solicitud es JSON
+                },
+                body: JSON.stringify(formData) // Convierte los datos del formulario a formato JSON
+            });
+
+            const result = await response.json(); // Convierte la respuesta a JSON
+            if (result.success) {
+                alert(result.message); // Muestra un mensaje de éxito
+                window.location.href = 'index.html'; // Redirige al inicio de sesión después del registro
+            } else {
+                alert(result.message); // Muestra un mensaje de error
+            }
+        });
+    </script>
+</body>
+</html>

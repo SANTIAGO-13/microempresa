@@ -1,0 +1,156 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #1DB2F2 0%, #08394F 100%);
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.form-container {
+    background-color: #1B1B1B;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px; /* Aumenta el ancho del cuadro */
+    margin: 0 auto;
+}
+
+.logo {
+    display: block;
+    max-width: 100px;
+    margin: 0 auto 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.subheader {
+    text-align: left;
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.instruction {
+    text-align: justify;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+form {
+    width: 100%;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+input,
+select {
+    width: calc(100% - 20px); /* Aumenta el tamaño de los cuadros de texto */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 3px solid #1DB2F2;
+    border-radius: 5px;
+    background-color: #D9D9D9;
+}
+
+button {
+    width: 48%; /* Deja espacio entre los botones */
+    padding: 10px;
+    background: linear-gradient(to right, #1DB2F2 0%, #08394F 100%);
+    color: white;
+    font-weight: bold;
+    border: 3px solid #1DB2F2;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+input::placeholder {
+    color: #666;
+}
+
+.forgot {
+    display: block;
+    text-align: justify;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-decoration: underline;
+}
+
+.switch {
+    text-align: center;
+    color: #ffffff;
+    margin-top: 8px;
+}
+
+.switch a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.switch a:hover {
+    text-decoration: underline;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-group {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.form-group:last-child {
+    margin-right: 0;
+}
+
+.password-group {
+    position: relative;
+}
+
+.password-group .fa-eye,
+.password-group .fa-eye-slash {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px; /* Añadido para dar más espacio entre los botones y el formulario */
+}
+
+.cancel {
+    background-color: #D9D9D9;
+}
+
+
+
+
+
